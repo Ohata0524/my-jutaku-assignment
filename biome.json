@@ -26,7 +26,6 @@
       "@types",
       ".expo"
     ],
-
     "enabled": true,
     "rules": {
       "recommended": true,
@@ -61,7 +60,7 @@
       "arrowParentheses": "always",
       "jsxQuoteStyle": "double",
       "semicolons": "asNeeded",
-      "trailingComma": "none",
+      "trailingCommas": "none",
       "quoteProperties": "asNeeded",
       "bracketSpacing": true,
       "bracketSameLine": false

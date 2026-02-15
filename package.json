@@ -74,7 +74,7 @@
   "simple-git-hooks": {
     "pre-commit": "bun run biome:apply"
   },
-"prisma": {
+  "prisma": {
     "seed": "bun prisma/seed.ts"
   }
 }
