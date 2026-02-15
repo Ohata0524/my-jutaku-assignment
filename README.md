@@ -1,35 +1,29 @@
----
-## データベース設計 (ER図)
-以下のER図に基づき、データベースを設計・構築しました。
-
-```mermaid
 erDiagram
     User ||--o{ Project : "作成(Admin)"
     User ||--o{ Entry : "申込(User)"
     Project ||--o{ Entry : "受付"
 
     User {
-        String id PK
-        String email UK
-        String password
-        String name
-        Role role
+        String id PK "ユーザーID"
+        String email UK "メールアドレス"
+        String password "パスワード"
+        String name "氏名"
+        Role role "役割"
     }
     Project {
-        String id PK
-        String title
-        String detail
-        String skills
-        Int unitPrice
-        DateTime deadline
-        DateTime deletedAt
-        String authorId FK
+        String id PK "案件ID"
+        String title "案件名"
+        String detail "詳細"
+        String skills "スキル"
+        Int unitPrice "単価"
+        DateTime deadline "締切"
+        DateTime deletedAt "削除フラグ"
+        String authorId FK "作成者ID"
     }
     Entry {
-        String id PK
-        String userId FK
-        String projectId FK
-        String status
+        String id PK "エントリーID"
+        String userId FK "ユーザーID"
+        String projectId FK "案件ID"
+        String status "ステータス"
     }
-
-    npx prisma studio
+    
