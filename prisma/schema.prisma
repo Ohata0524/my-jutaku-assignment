@@ -9,25 +9,59 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
-model User {
-  id    String     @id // 認証プロバイダーのユーザーID
-  email String  @unique
-  name  String
-  role  Role    @default(USER)
-  todos Todo[]
-}
+
+// 役割を定義する列挙型（Enum）
 enum Role {
-  USER
   ADMIN
+  USER
 }
 
+// ユーザーモデル
+model User {
+  id        String    @id @default(cuid()) // ユーザーID
+  email     String    @unique               // メールアドレス（ユニーク制約）
+  password  String                          // 暗号化パスワード
+  name      String                          // 氏名
+  role      Role      @default(USER)       // 役割（デフォルトは一般ユーザー）
+  createdAt DateTime  @default(now())      // 作成日時
+  updatedAt DateTime  @updatedAt            // 更新日時
 
-model Todo {
-  id        String   @id @default(uuid()) // Todoの一意識別子
-  title     String   // Todoのタイトル
-  completed Boolean  @default(false)    // 完了ステータス
-  createdAt DateTime @default(now())    // 作成日時
-  updatedAt DateTime @updatedAt       // 更新日時
-  user      User     @relation(fields: [userId], references: [id])
+  // リレーションシップ
+  projects  Project[] // 管理者として作成した案件一覧
+  entries   Entry[]   // ユーザーとして申し込んだエントリー一覧
+}
+
+// 案件モデル
+model Project {
+  id          String    @id @default(cuid()) // 案件ID
+  title       String                          // 案件名
+  detail      String    @db.Text             // 案件概要・詳細（長文対応）
+  skills      String                          // 必要スキル
+  unitPrice   Int                             // 単価
+  deadline    DateTime                        // 応募締切日
+  createdAt   DateTime  @default(now())      // 作成日時
+  updatedAt   DateTime  @updatedAt            // 更新日時
+  deletedAt   DateTime?                       // 論理削除フラグ（?は空を許容）
+
+  // リレーションシップ
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  entries     Entry[]   // この案件に届いたエントリー一覧
+}
+
+// エントリーモデル（中間テーブル）
+model Entry {
+  id        String   @id @default(cuid()) // エントリーID
+  status    String   @default("検討中")    // ステータス
+  createdAt DateTime @default(now())      // エントリー日時
+
+  // リレーションシップ
   userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+
+  // 同じユーザーが同じ案件に何度もエントリーできないようにする場合に設定
+  @@unique([userId, projectId]) 
 }
+

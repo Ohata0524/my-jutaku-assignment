@@ -55,6 +55,7 @@
     "@mermaid-js/mermaid-cli": "^10.8.0",
     "@types/bun": "latest",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^25.2.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "cross-env": "^7.0.3",
@@ -66,10 +67,15 @@
     "prisma-erd-generator": "^1.11.2",
     "rimraf": "^5.0.5",
     "simple-git-hooks": "^2.11.0",
-    "typescript": "latest",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "vercel": "^33.6.1"
   },
   "simple-git-hooks": {
     "pre-commit": "bun run biome:apply"
   }
-}
+,"prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }}
+
+  
