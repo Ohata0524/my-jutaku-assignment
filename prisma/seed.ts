@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@prisma/client'
+import { PrismaClient, Role, EntryStatus } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -7,74 +7,51 @@ async function main() {
   await prisma.project.deleteMany()
   await prisma.user.deleteMany()
 
-  // 1. ユーザー（3名）
-  const admin = await prisma.user.create({
-    data: {
-      email: 'admin@example.com',
-      password: 'password123',
-      name: '管理者 太郎',
-      role: Role.ADMIN
-    }
-  })
+  // 1. ユーザーの作成
   const user1 = await prisma.user.create({
     data: {
-      email: 'user1@example.com',
-      password: 'password123',
-      name: '佐藤 健太',
-      role: Role.USER
-    }
+      id: "cmlx73ims0000d0p5ulfqvlbl",
+      email: "admin@example.com",
+      password: "password", 
+      name: "管理者 太郎",
+      role: Role.ADMIN,
+    },
   })
+
   const user2 = await prisma.user.create({
     data: {
-      email: 'user2@example.com',
-      password: 'password123',
-      name: '鈴木 一郎',
-      role: Role.USER
-    }
+      email: "user@example.com",
+      password: "password",
+      name: "開発 翼",
+      role: Role.USER,
+    },
   })
 
-  // 2. 案件（3件）
-  const project1 = await prisma.project.create({
-    data: {
-      title: '次世代フロントエンド開発',
-      detail: 'Next.jsを用いたプロジェクトです。',
-      skills: 'React, Next.js',
-      unitPrice: 800000,
-      deadline: new Date('2026-03-31'),
-      authorId: admin.id
-    }
-  })
-  const project2 = await prisma.project.create({
-    data: {
-      title: 'IoMTデバイス管理システム',
-      detail: '医療機器のデータを可視化します。',
-      skills: 'TypeScript, AWS',
-      unitPrice: 950000,
-      deadline: new Date('2026-04-15'),
-      authorId: admin.id
-    }
-  })
-  const project3 = await prisma.project.create({
-    data: {
-      title: '住宅ローンシミュレーター',
-      detail: 'Mantine UIを使用したUI刷新です。',
-      skills: 'React, Mantine',
-      unitPrice: 700000,
-      deadline: new Date('2026-05-20'),
-      authorId: admin.id
-    }
-  })
+  // 2. 案件の作成
+await prisma.project.create({
+  data: {
+    title: "次世代フロントエンド開発",
+    detail: "Next.jsを用いたプロジェクトです。",
+    skills: "React, Next.js",
+    unit_price: 800000,
+    deadline: new Date("2026-03-31T00:00:00.000Z"),
+    user_id: user1.id, 
+  },
+})
 
-  // 3. エントリー（3件）
-  await prisma.entry.createMany({
-    data: [
-      { userId: user1.id, projectId: project1.id, status: '検討中' },
-      { userId: user2.id, projectId: project1.id, status: '完了' },
-      { userId: user1.id, projectId: project2.id, status: '検討中' }
-    ]
-  })
+  // 3. エントリーの作成（サンプル）
+  const project = await prisma.project.findFirst()
+  if (project) {
+    await prisma.entry.create({
+      data: {
+        status: EntryStatus.PENDING, 
+        user_id: user2.id, 
+        project_id: project.id, 
+      },
+    })
+  }
 
-  console.log('3件ずつのサンプルデータを投入しました！')
+  console.log("シードデータの投入が完了しました")
 }
 
 main()
@@ -85,3 +62,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
