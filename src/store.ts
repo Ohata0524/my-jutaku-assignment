@@ -2,7 +2,7 @@ import type { User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-//  既存のユーザー状態管理 
+//  既存のユーザー状態管理
 type UserState = {
   user: User | null
 }
@@ -14,7 +14,7 @@ export const useUserStore = create<UserState & UserAction>((set) => ({
   setUser: (user) => set({ user })
 }))
 
-//  受託課題②：案件・エントリーの状態管理（永続化対応） 
+//  受託課題②：案件・エントリーの状態管理（永続化対応）
 
 export interface Project {
   id: string
@@ -40,33 +40,33 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       projects: [],
       userEntries: [],
-      
+
       // 案件の追加（新しい順に表示するため先頭に追加）
       addProject: (project) =>
         set((state) => ({ projects: [project, ...state.projects] })),
-      
+
       // 案件の更新
       updateProject: (updatedProject) =>
         set((state) => ({
           projects: state.projects.map((p) =>
             p.id === updatedProject.id ? updatedProject : p
-          ),
+          )
         })),
-      
+
       // 案件の削除
       deleteProject: (id) =>
         set((state) => ({
-          projects: state.projects.filter((p) => p.id !== id),
+          projects: state.projects.filter((p) => p.id !== id)
         })),
-      
+
       // エントリーの追加（重複防止のため Set を活用）
       addEntry: (projectId) =>
         set((state) => ({
-          userEntries: Array.from(new Set([...state.userEntries, projectId])),
-        })),
+          userEntries: Array.from(new Set([...state.userEntries, projectId]))
+        }))
     }),
     {
-      name: 'jutaku-assignment-storage', // LocalStorageに保存されるキー名
+      name: 'jutaku-assignment-storage' // LocalStorageに保存されるキー名
     }
   )
 )

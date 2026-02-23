@@ -30,6 +30,7 @@ export default function AdminProjectEditPage() {
     setLoading(true)
     try {
       await new Promise(resolve => setTimeout(resolve, 1000)) // 2度押し防止
+      
       updateProject({ ...data, id: projectId, created_at: project!.created_at })
       router.push('/admin/projects' as any)
     } finally {
@@ -37,6 +38,7 @@ export default function AdminProjectEditPage() {
     }
   }
 
+  
   if (!project) return <Container py="xl"><Text>案件が見つかりません</Text></Container>
 
   return (
@@ -83,4 +85,3 @@ export default function AdminProjectEditPage() {
     </Container>
   )
 }
-

@@ -1,7 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Container, Table, Group, Title, Button, Text, Paper, Badge, ActionIcon } from '@mantine/core'
+import {
+  Container,
+  Table,
+  Group,
+  Title,
+  Button,
+  Text,
+  Paper,
+  Badge,
+  ActionIcon
+} from '@mantine/core'
 import { useAppStore, type Project } from '../../../store'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -14,7 +24,7 @@ export default function AdminProjectListPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('本当に削除しますか？')) return
     setDeletingId(id) // ローディング開始
-    await new Promise(resolve => setTimeout(resolve, 800)) 
+    await new Promise((resolve) => setTimeout(resolve, 800))
     deleteProject(id)
     setDeletingId(null)
   }
@@ -45,17 +55,36 @@ export default function AdminProjectListPage() {
                 <Table.Td fw={500}>{project.title}</Table.Td>
                 <Table.Td>
                   <Group gap={5}>
-                    {project.skills.map(s => <Badge key={s} variant="outline" size="sm">{s}</Badge>)}
+                    {project.skills.map((s) => (
+                      <Badge key={s} variant="outline" size="sm">
+                        {s}
+                      </Badge>
+                    ))}
                   </Group>
                 </Table.Td>
                 <Table.Td>
                   <Group gap="xs">
-                    <Button variant="light" size="xs" component={Link} href={`/admin/projects/${project.id}` as any}>詳細</Button>
-                    <Button variant="light" color="orange" size="xs" component={Link} href={`/admin/projects/${project.id}/edit` as any}>編集</Button>
-                    <Button 
-                      variant="light" 
-                      color="red" 
-                      size="xs" 
+                    <Button
+                      variant="light"
+                      size="xs"
+                      component={Link}
+                      href={`/admin/projects/${project.id}` as any}
+                    >
+                      詳細
+                    </Button>
+                    <Button
+                      variant="light"
+                      color="orange"
+                      size="xs"
+                      component={Link}
+                      href={`/admin/projects/${project.id}/edit` as any}
+                    >
+                      編集
+                    </Button>
+                    <Button
+                      variant="light"
+                      color="red"
+                      size="xs"
                       onClick={() => handleDelete(project.id)}
                       loading={deletingId === project.id}
                     >
