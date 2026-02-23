@@ -22,8 +22,11 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
     | StaticRoute<"/api/trpc/panel">
     | StaticRoute<"/entry-list">
+    | StaticRoute<"/login">
+    | StaticRoute<"/my-entries">
     | StaticRoute<"/projects">
-    | DynamicRoute<"/projects/[projectId]", { "projectId": string }>
+    | DynamicRoute<"/projects/[id]", { "id": string }>
+    | StaticRoute<"/register">
     | StaticRoute<"/signup">;
 
   interface StaticRoute<Pathname> {
