@@ -21,24 +21,29 @@ export default function AdminProjectEditPage() {
     resolver: zodResolver(projectSchema)
   })
 
-  // 既存データをフォームにセット
   useEffect(() => {
     if (project) reset(project)
   }, [project, reset])
 
   const onSubmit = async (data: ProjectFormValues) => {
+    
+    if (!project) return 
+
     setLoading(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)) // 2度押し防止
+      await new Promise(resolve => setTimeout(resolve, 1000))
       
-      updateProject({ ...data, id: projectId, created_at: project!.created_at })
+      updateProject({ 
+        ...data, 
+        id: projectId, 
+        created_at: project.created_at 
+      })
       router.push('/admin/projects' as any)
     } finally {
       setLoading(false)
     }
   }
 
-  
   if (!project) return <Container py="xl"><Text>案件が見つかりません</Text></Container>
 
   return (
@@ -85,3 +90,4 @@ export default function AdminProjectEditPage() {
     </Container>
   )
 }
+
