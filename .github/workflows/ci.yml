@@ -1,7 +1,17 @@
+name: CI
+
+
+on:
+  push:
+    branches: [main, feature/ui-implementation]
+  pull_request:
+    branches: [main]
+
 jobs:
-  ci: # 名前は環境によって異なる場合があります
+  ci:
     runs-on: ubuntu-latest
-    
+
+    # CI環境でPostgreSQLを起動させる設定
     services:
       postgres:
         image: postgres:15
@@ -11,7 +21,6 @@ jobs:
           POSTGRES_DB: postgres
         ports:
           - 5432:5432
-        # DBの準備ができるまで待機する設定
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -20,11 +29,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      # ... (中略) ...
-      
-      # 既存の移行コマンド
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Copy env
+        run: cp .env.example .env
+
+      # DBのマイグレーション（CI上のPostgresに接続）
       - name: Run db:migrate
         run: bun run db:migrate
         env:
-          # CI上で起動したPostgresに接続させる
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+
+      # その他のチェック（必要に応じて）
+      - name: Run lint
+        run: bun run biome:check
+      
+      - name: Run typecheck
+        run: bun run typecheck
+
+      - name: Run build
+        run: bun run build
+        
