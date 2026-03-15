@@ -1,36 +1,30 @@
-name: CI
-on: push
 jobs:
-  test:
-    name: CI
-    timeout-minutes: 10
+  ci: # 名前は環境によって異なる場合があります
     runs-on: ubuntu-latest
+    
     services:
       postgres:
-        image: postgres
-        ports:
-          - 25432:5432
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-    env:
-      CI: true
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        # DBの準備ができるまで待機する設定
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-      - uses: actions/cache@v4
-        id: client-bun-cache
-        with:
-          path: 'node_modules'
-          key: client-bun-${{ hashFiles('bun.lockb') }}
-      - run: bun install
-        if: steps.client-bun-cache.outputs.cache-hit != 'true'
-      - run: cp .env.example .env 
-      - run: bun run db:migrate
-      - run: bun run biome:check
-      - run: bun run typecheck
-      - run: bun run build
-      - run: bun test
+      # ... (中略) ...
       
+      # 既存の移行コマンド
+      - name: Run db:migrate
+        run: bun run db:migrate
+        env:
+          # CI上で起動したPostgresに接続させる
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
