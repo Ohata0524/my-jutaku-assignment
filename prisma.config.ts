@@ -1,6 +1,7 @@
+// prisma.config.ts
 export default {
   datasource: {
-    // スキーマから削除した接続URLをここで定義
-    url: process.env.POSTGRES_URL
-  }
+    // CI環境などで環境変数が空の場合、バリデーションエラーを防ぐためにダミーURLを設定します
+    url: process.env.POSTGRES_URL || 'postgresql://postgres:postgres@localhost:5432/postgres',
+  },
 }
