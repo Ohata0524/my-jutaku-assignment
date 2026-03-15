@@ -7,13 +7,15 @@ import {
   TextInput,
   PasswordInput,
   Button,
-  Paper,
+  Anchor,
   Title,
   Container,
-  Stack
+  Stack,
+  Text
 } from '@mantine/core'
 import { loginSchema } from '../../schema/authSchema'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -30,28 +32,66 @@ export default function LoginPage() {
   const onSubmit = async (data: any) => {
     setLoading(true)
     try {
-      // 2度押し防止のための処理
       await new Promise((resolve) => setTimeout(resolve, 1500))
       console.log('ログイン成功:', data)
-      // ログイン成功後、案件一覧へ遷移
       router.push('/projects' as any)
     } finally {
       setLoading(false)
     }
   }
 
+  const inputStyles = {
+    label: {
+      color: '#1A1A1A',
+      fontSize: '14px',
+      fontWeight: 600,
+      lineHeight: '20px',
+      marginBottom: '8px'
+    },
+    input: {
+      fontSize: '14px',
+      lineHeight: '20px',
+      color: '#1A1A1A',
+      borderColor: '#DEDEDE',
+      height: '40px',
+      '&::placeholder': {
+        color: '#808080'
+      }
+    }
+  }
+
   return (
-    <Container size={420} my={40}>
-      <Title ta="center">ログイン</Title>
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+    <Container
+      fluid
+      h="100vh"
+      p={0}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF'
+      }}
+    >
+      <Stack gap={20} w={400}>
+        <Title
+          ta="center"
+          fw={700}
+          fz={24}
+          lh="32px"
+          c="#1A1A1A"
+          style={{ marginBottom: '10px' }}
+        >
+          ログイン
+        </Title>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack>
+          <Stack gap={20}>
             <TextInput
               label="メールアドレス"
               placeholder="you@example.com"
               required
               {...register('email')}
               error={errors.email?.message as string}
+              styles={inputStyles}
             />
             <PasswordInput
               label="パスワード"
@@ -59,13 +99,43 @@ export default function LoginPage() {
               required
               {...register('password')}
               error={errors.password?.message as string}
+              styles={inputStyles}
             />
-            <Button type="submit" fullWidth loading={loading}>
+            <Button
+              type="submit"
+              fullWidth
+              loading={loading}
+              bg="#0000FF"
+              h={48}
+              fw={600}
+              fz={16}
+              lh="24px"
+              style={{ marginTop: '10px' }}
+            >
               ログイン
             </Button>
           </Stack>
         </form>
-      </Paper>
+
+        <Text
+          ta="center"
+          fz={14}
+          lh="20px"
+          c="#1A1A1A"
+          style={{ marginTop: '0px' }}
+        >
+          新規登録は
+          <Anchor
+            component={Link}
+            href="/register"
+            c="#1A1A1A"
+            td="underline"
+            fw={400}
+          >
+            こちら
+          </Anchor>
+        </Text>
+      </Stack>
     </Container>
   )
 }

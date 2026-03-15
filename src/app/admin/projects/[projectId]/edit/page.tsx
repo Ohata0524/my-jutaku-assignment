@@ -30,7 +30,6 @@ export default function AdminProjectEditPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
-  // 編集対象の案件を取得
   const project = projects.find((p: Project) => p.id === projectId)
 
   const {
@@ -43,7 +42,6 @@ export default function AdminProjectEditPage() {
     resolver: zodResolver(projectSchema)
   })
 
-  // 案件データが取得できたらフォームの初期値をセット
   useEffect(() => {
     if (project) {
       reset(project)
@@ -62,7 +60,7 @@ export default function AdminProjectEditPage() {
       updateProject({
         ...data,
         id: projectId,
-        created_at: project.created_at // ここで ! や ? を使わないのがポイント
+        created_at: project.created_at
       })
 
       router.push('/admin/projects' as any)
@@ -71,7 +69,6 @@ export default function AdminProjectEditPage() {
     }
   }
 
-  // 案件が見つからない場合のガード（表示用）
   if (!project) {
     return (
       <Container py="xl">

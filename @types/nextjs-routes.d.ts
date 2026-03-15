@@ -12,6 +12,7 @@ declare module "nextjs-routes" {
 
   export type Route =
     | StaticRoute<"/">
+    | StaticRoute<"/admin/login">
     | StaticRoute<"/admin/projects">
     | DynamicRoute<"/admin/projects/[projectId]", { "projectId": string }>
     | DynamicRoute<"/admin/projects/[projectId]/edit", { "projectId": string }>

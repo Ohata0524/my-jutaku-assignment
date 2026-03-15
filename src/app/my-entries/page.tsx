@@ -1,99 +1,114 @@
 'use client'
 
-import { useState, useMemo } from 'react'
 import {
   Container,
-  Table,
   Title,
+  Table,
   Button,
   Group,
-  Text,
-  Paper
+  Stack,
+  Box,
+  Text
 } from '@mantine/core'
-import { useAppStore, type Project } from '../../store'
 import { useRouter } from 'next/navigation'
+import { useAppStore } from '@/store'
 
 export default function MyEntriesPage() {
   const router = useRouter()
-  const { projects, userEntries } = useAppStore()
+  const { projects } = useAppStore()
 
-  const [sortBy, setSortBy] = useState<'date' | 'price' | null>(null)
-  const [reverse, setReverse] = useState(false)
+  const enteredProjects = projects
 
-  const enteredProjects = useMemo(() => {
-    const list = projects.filter((p: Project) => userEntries.includes(p.id))
-
-    if (!sortBy) return list
-
-    return [...list].sort((a: Project, b: Project) => {
-      if (sortBy === 'date') {
-        return reverse
-          ? b.created_at.localeCompare(a.created_at)
-          : a.created_at.localeCompare(b.created_at)
-      }
-      if (sortBy === 'price') {
-        return reverse
-          ? b.unit_price - a.unit_price
-          : a.unit_price - b.unit_price
-      }
-      return 0
-    })
-  }, [projects, userEntries, sortBy, reverse])
-
-  const handleSort = (field: 'date' | 'price') => {
-    if (sortBy === field) {
-      setReverse(!reverse)
-    } else {
-      setSortBy(field)
-      setReverse(false)
+  const tableStyles = {
+    thead: {
+      backgroundColor: '#E7F5FF'
+    },
+    th: {
+      color: '#1A1A1A',
+      fontSize: '14px',
+      fontWeight: 600,
+      padding: '16px',
+      borderBottom: '1px solid #DEDEDE',
+      textAlign: 'center' as const
+    },
+    td: {
+      color: '#1A1A1A',
+      fontSize: '14px',
+      padding: '16px',
+      borderBottom: '1px solid #DEDEDE',
+      verticalAlign: 'middle' as const,
+      textAlign: 'center' as const
     }
   }
 
-  return (
-    <Container size="md" py="xl">
-      <Group justify="space-between" mb="xl">
-        <Title order={2}>エントリー済み一覧</Title>
-        <Button variant="outline" onClick={() => router.back()}>
-          戻る
-        </Button>
-      </Group>
+  const rows = enteredProjects.map((project) => (
+    <Table.Tr key={project.id}>
+      <Table.Td>{project.created_at}</Table.Td>
+      <Table.Td fw={500}>{project.title}</Table.Td>
+      <Table.Td>{project.unit_price.toLocaleString()} 円</Table.Td>
+    </Table.Tr>
+  ))
 
-      <Paper withBorder p="md" radius="md">
-        {enteredProjects.length === 0 ? (
-          <Text ta="center" py="xl" c="dimmed">
-            エントリーした案件はまだありません。
-          </Text>
-        ) : (
-          <Table verticalSpacing="sm">
+  return (
+    <Container
+      fluid
+      py={115}
+      px={115}
+      bg="#FFFFFF"
+      style={{ minHeight: '100vh' }}
+    >
+      <Stack gap={40} maw={1000} mx="auto">
+        <Box style={{ position: 'relative' }}>
+          <Title ta="center" fw={700} fz={24} c="#1A1A1A">
+            エントリー済み一覧
+          </Title>
+          <Button
+            variant="filled"
+            color="blue"
+            size="xs"
+            onClick={() => router.push('/projects' as any)}
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}
+            h={32}
+            px={20}
+          >
+            戻る
+          </Button>
+        </Box>
+
+        <Table.ScrollContainer minWidth={600}>
+          <Table
+            verticalSpacing="md"
+            withTableBorder={false}
+            styles={tableStyles}
+          >
             <Table.Thead>
               <Table.Tr>
+                <Table.Th>エントリー日</Table.Th>
                 <Table.Th>案件名</Table.Th>
-                <Table.Th
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('date')}
-                >
-                  エントリー日 {sortBy === 'date' && (reverse ? '▼' : '▲')}
-                </Table.Th>
-                <Table.Th
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('price')}
-                >
-                  単価 {sortBy === 'price' && (reverse ? '▼' : '▲')}
-                </Table.Th>
+                <Table.Th>単価</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {enteredProjects.map((project: Project) => (
-                <Table.Tr key={project.id}>
-                  <Table.Td fw={500}>{project.title}</Table.Td>
-                  <Table.Td>{project.created_at}</Table.Td>
-                  <Table.Td>{project.unit_price.toLocaleString()}円</Table.Td>
+              {rows.length > 0 ? (
+                rows
+              ) : (
+                <Table.Tr>
+                  <Table.Td colSpan={3}>
+                    <Text ta="center" py="xl" c="dimmed">
+                      エントリー済みの案件はありません
+                    </Text>
+                  </Table.Td>
                 </Table.Tr>
-              ))}
+              )}
             </Table.Tbody>
           </Table>
-        )}
-      </Paper>
+        </Table.ScrollContainer>
+      </Stack>
     </Container>
   )
 }
