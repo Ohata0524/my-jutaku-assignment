@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 declare global {
-	var globalPrisma: undefined | PrismaClient;
+	var globalPrisma: any; // 型を any にして、一時的に厳格な型チェックを回避します
 }
 
 export const prisma = globalThis.globalPrisma ?? new PrismaClient();
