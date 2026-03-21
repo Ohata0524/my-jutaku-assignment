@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    datasourceUrl: process.env.POSTGRES_URL,
+    datasourceUrl: process.env.POSTGRES_URL
   })
 }
 
@@ -14,4 +14,6 @@ const prisma = globalThis.globalPrisma ?? prismaClientSingleton()
 
 export default prisma
 
-if (process.env.NODE_ENV !== 'production') globalThis.globalPrisma = prisma
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.globalPrisma = prisma
+}
