@@ -50,6 +50,9 @@ jobs:
         run: bun x tsc --noEmit
 
       - name: Run build
-        run: bun run build
+        run: |
+          bun x prisma migrate deploy
+          bun run build
         env:
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          NEXT_TELEMETRY_DISABLED: 1
