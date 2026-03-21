@@ -1,25 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 
-const prismaClientSingleton = () => {
-  // ビルド時（環境変数が空の時）にエラーで止まらないよう、フォールバックURLを設定します
-  const connectionUrl =
-    process.env.POSTGRES_URL ||
-    'postgresql://postgres:postgres@localhost:5432/postgres'
-
-  return new PrismaClient({
-    datasources: {
-      db: {
-        url: connectionUrl
-      }
-    }
-  })
-}
-
 declare global {
-  var globalPrisma: undefined | ReturnType<typeof prismaClientSingleton>
+  // グローバル変数の衝突を避けるための定義
+  var globalPrisma: PrismaClient | undefined
 }
 
-export const prisma = globalThis.globalPrisma ?? prismaClientSingleton()
+// 他のファイルが import { prisma } で読み込めるよう、名前付きエクスポートにします
+export const prisma = globalThis.globalPrisma ?? new PrismaClient()
 
 if (process.env.NODE_ENV !== 'production') {
   globalThis.globalPrisma = prisma
