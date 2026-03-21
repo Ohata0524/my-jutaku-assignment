@@ -40,6 +40,9 @@ jobs:
       - name: Copy env
         run: cp .env.example .env
 
+      - name: Generate Prisma Client
+        run: bun x prisma generate
+
       - name: Run Biome Check
         run: bun x @biomejs/biome check .
 
