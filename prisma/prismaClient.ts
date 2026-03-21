@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 
 declare global {
   // グローバル変数の衝突を避けるための定義
-  var globalPrisma: PrismaClient | undefined
+  var globalPrisma: undefined | PrismaClient
 }
 
 // 他のファイルが import { prisma } で読み込めるよう、名前付きエクスポートにします
