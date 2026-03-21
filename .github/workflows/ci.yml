@@ -2,12 +2,9 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - feature/ui-implementation
+    branches: [main, feature/ui-implementation]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   ci:
@@ -47,6 +44,7 @@ jobs:
         run: bun x @biomejs/biome check .
 
       - name: Run typecheck
+        # ここで TS2353 や TS2614 が出ないことを確認しています
         run: bun x tsc --noEmit
 
       - name: Run build
@@ -54,5 +52,6 @@ jobs:
           bun x prisma migrate deploy
           bun run build
         env:
+          # ビルド時にもDB接続URLを渡すことで、PrismaClientの初期化エラーを防ぎます
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
-          NEXT_TELEMETRY_DISABLED: 1
+          
