@@ -13,13 +13,12 @@ import {
   Group
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { useAppStore, type Project } from '../../../../store'
+import { useAppStore, type Project } from '../../../store'
 import { useParams, useRouter } from 'next/navigation'
 
 export default function AdminProjectDetailPage() {
   const params = useParams()
-
-  const projectId = params?.projectId as string
+  const projectId = params?.id as string
   const router = useRouter()
   const { projects, deleteProject } = useAppStore()
 
@@ -44,18 +43,8 @@ export default function AdminProjectDetailPage() {
 
   if (!project)
     return (
-      <Container py={115}>
-        <Stack align="center">
-          <Text size="xl" fw={700} c="red">
-            案件が見つかりません
-          </Text>
-          <Button
-            variant="subtle"
-            onClick={() => router.push('/admin/projects' as any)}
-          >
-            一覧に戻る
-          </Button>
-        </Stack>
+      <Container py="xl">
+        <Text>案件が見つかりません</Text>
       </Container>
     )
 
@@ -196,25 +185,32 @@ export default function AdminProjectDetailPage() {
       <Modal
         opened={entryModalOpened}
         onClose={() => setEntryModalOpened(false)}
-        title="エントリー一覧"
+        title="エントリー者一覧"
         centered
-        size="sm"
-        padding="xl"
+        size="lg"
       >
-        <Stack align="center" gap="md" py="xl">
-          <Text fz="md" c="#1A1A1A">
-            吉田 一郎
-          </Text>
-          <Text fz="md" c="#1A1A1A">
-            田中 次郎
-          </Text>
-          <Text fz="md" c="#1A1A1A">
-            加藤 三郎
-          </Text>
-          <Text fz="md" c="#1A1A1A">
-            東京 四郎
-          </Text>
-        </Stack>
+        <Table verticalSpacing="md">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>氏名</Table.Th>
+              <Table.Th>エントリー日</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Td>テスト 太郎</Table.Td>
+              <Table.Td>2026/02/23</Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+        <Button
+          fullWidth
+          mt="xl"
+          bg="blue"
+          onClick={() => setEntryModalOpened(false)}
+        >
+          閉じる
+        </Button>
       </Modal>
     </Container>
   )

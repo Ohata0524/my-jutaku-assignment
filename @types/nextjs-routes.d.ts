@@ -12,6 +12,7 @@ declare module "nextjs-routes" {
 
   export type Route =
     | StaticRoute<"/">
+    | StaticRoute<"/admin/login">
     | StaticRoute<"/admin/projects">
     | DynamicRoute<"/admin/projects/[projectId]", { "projectId": string }>
     | DynamicRoute<"/admin/projects/[projectId]/edit", { "projectId": string }>
@@ -22,8 +23,11 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/trpc/[trpc]", { "trpc": string }>
     | StaticRoute<"/api/trpc/panel">
     | StaticRoute<"/entry-list">
+    | StaticRoute<"/login">
+    | StaticRoute<"/my-entries">
     | StaticRoute<"/projects">
-    | DynamicRoute<"/projects/[projectId]", { "projectId": string }>
+    | DynamicRoute<"/projects/[id]", { "id": string }>
+    | StaticRoute<"/register">
     | StaticRoute<"/signup">;
 
   interface StaticRoute<Pathname> {
