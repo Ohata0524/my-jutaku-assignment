@@ -22,7 +22,7 @@ jobs:
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
-          --health-timeout 5s
+          --health-timeout 5sdocker-compose up -d
           --health-retries 5
 
     steps:
@@ -39,19 +39,22 @@ jobs:
 
       - name: Generate Prisma Client
         run: bun x prisma generate
+        env:
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
 
       - name: Run Biome Check
         run: bun x @biomejs/biome check .
 
       - name: Run typecheck
-        # ここで TS2353 や TS2614 が出ないことを確認しています
         run: bun x tsc --noEmit
 
       - name: Run build
         run: |
+          # 以前の db:push と migrate deploy の衝突を防ぐため、
+          # CI用のクリーンなDBに対してデプロイのみ実行します。
           bun x prisma migrate deploy
           bun run build
         env:
-          # ビルド時にもDB接続URLを渡すことで、PrismaClientの初期化エラーを防ぎます
+          # ビルド工程全体（特に静的ページ生成時）でURLを確実に認識させます。
           POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
-          
+          NEXT_TELEMETRY_DISABLED: 1
